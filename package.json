@@ -1,0 +1,13 @@
+{
+  "name": "kavari-stores",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kavari Stores — customer storefront, inventory portal and API in one Node server. No dependencies.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

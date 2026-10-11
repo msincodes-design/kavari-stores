@@ -1,0 +1,12 @@
+data/db.json
+data/server-port.txt
+data/server.log
+data/backups
+.git
+.gitignore
+.env
+README.md
+DEPLOY.md
+start-server.cmd
+.DS_Store
+Thumbs.db

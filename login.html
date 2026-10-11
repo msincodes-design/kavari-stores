@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Staff sign-in — Kavari Stores</title>
+<meta name="theme-color" content="#0B0B0C" />
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="admin.css" />
+</head>
+<body class="auth-body">
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <div>
+        <h1>Kavari Stores</h1>
+        <p>Inventory portal</p>
+      </div>
+    </div>
+
+    <div class="auth-note">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 15a5 5 0 100-10 5 5 0 000 10zM4 21a8 8 0 0116 0"/></svg>
+      <span>Staff only. Customers shop on the storefront — this area manages stock, prices and orders.</span>
+    </div>
+
+    <form id="loginForm" class="auth-form" novalidate>
+      <div class="field">
+        <label for="l-email">Admin email</label>
+        <input id="l-email" type="email" placeholder="admin@example.com" autocomplete="username" />
+        <p class="field__error" data-error="email"></p>
+      </div>
+
+      <div class="field">
+        <label for="l-password">Password</label>
+        <div class="input-row">
+          <input id="l-password" type="password" placeholder="••••••" autocomplete="current-password" />
+          <button type="button" class="btn btn--ghost btn--sm" id="togglePw">Show</button>
+        </div>
+        <p class="field__error" data-error="password"></p>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--block" id="loginBtn">Sign in</button>
+      <p class="auth-error" id="authError" hidden></p>
+    </form>
+
+    <div class="auth-foot">
+      <a href="/">← Back to the shop</a>
+      <span id="serverState">Checking server…</span>
+    </div>
+  </div>
+
+  <p class="auth-demo">Credentials are verified on the server, never in the browser.</p>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="assets/brand.js"></script>
+<script src="store.js"></script>
+<script>
+(() => {
+  const K = window.Kavari;
+  const $ = (s) => document.querySelector(s);
+  let attempts = 0;
+
+  (async () => {
+    const email = await K.verify();
+    if (email) window.location.replace('admin.html');
+  })();
+
+  fetch('/api/health')
+    .then((r) => r.json())
+    .then((d) => { $('#serverState').textContent = `${d.products} products live`; })
+    .catch(() => {
+      $('#serverState').textContent = 'Server unreachable';
+      const err = $('#authError');
+      err.hidden = false;
+      err.textContent = 'Cannot reach the Kavari server. Make sure it is running, then reload.';
+    });
+
+  $('#togglePw').addEventListener('click', () => {
+    const pw = $('#l-password');
+    const show = pw.type === 'password';
+    pw.type = show ? 'text' : 'password';
+    $('#togglePw').textContent = show ? 'Hide' : 'Show';
+  });
+
+  function clearErrors() {
+    document.querySelectorAll('.field').forEach((f) => f.classList.remove('has-error'));
+    document.querySelectorAll('.field__error').forEach((e) => (e.textContent = ''));
+    $('#authError').hidden = true;
+  }
+
+  $('#loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = $('#l-email').value.trim();
+    const password = $('#l-password').value;
+    clearErrors();
+
+    const errors = {};
+    if (!email) errors.email = 'Enter your admin email address.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = 'That email address looks invalid.';
+    if (!password) errors.password = 'Enter your password.';
+    if (Object.keys(errors).length) {
+      Object.entries(errors).forEach(([k, msg]) => {
+        const el = document.querySelector(`[data-error="${k}"]`);
+        if (el) { el.textContent = msg; el.closest('.field').classList.add('has-error'); }
+      });
+      return;
+    }
+
+    const btn = $('#loginBtn');
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+    try {
+      await K.login(email, password);
+      window.location.href = 'admin.html';
+    } catch (err) {
+      attempts++;
+      const box = $('#authError');
+      box.hidden = false;
+      box.textContent = err.status === 401 ? `${err.message} Attempt ${attempts}.` : err.message;
+      $('#l-password').value = '';
+      $('#l-password').focus();
+      btn.disabled = false;
+      btn.textContent = 'Sign in';
+    }
+  });
+
+  $('#l-email').focus();
+})();
+</script>
+</body>
+</html>

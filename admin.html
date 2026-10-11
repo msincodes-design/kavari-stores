@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kavari Stores — Inventory Portal</title>
+<meta name="theme-color" content="#0B0B0C" />
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<!-- ============ SIDEBAR ============ -->
+<aside class="side" id="side">
+  <div class="side__brand">
+    <a class="brand" href="admin.html">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span class="brand__type">
+        <span class="brand__name">Kavari</span>
+        <span class="brand__sub">Inventory</span>
+      </span>
+    </a>
+  </div>
+
+  <nav class="side__nav">
+    <p class="side__label">Manage</p>
+    <button class="side__link is-active" data-panel="dashboard">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4 13h7V4H4zM13 20h7V4h-7zM4 20h7v-4H4z"/></svg>
+      Dashboard
+    </button>
+    <button class="side__link" data-panel="inventory">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4zM3 7v10l9 4 9-4V7"/></svg>
+      Inventory
+      <span class="side__badge" id="navInvBadge" hidden>0</span>
+    </button>
+    <button class="side__link" data-panel="orders">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
+      Orders
+      <span class="side__badge" id="navOrderBadge" hidden>0</span>
+    </button>
+    <button class="side__link" data-panel="transactions">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/></svg>
+      Movements
+    </button>
+
+    <p class="side__label" style="margin-top:22px">Configure</p>
+    <button class="side__link" data-panel="settings">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6zM19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-2.9 1.2 2 2 0 11-4 0 1.7 1.7 0 00-2.9-1.2l-.1.1a2 2 0 11-2.8-2.8l.1-.1A1.7 1.7 0 003 15a2 2 0 010-4 1.7 1.7 0 001.2-2.9l-.1-.1a2 2 0 112.8-2.8l.1.1A1.7 1.7 0 0010 4.2a2 2 0 014 0 1.7 1.7 0 002.9 1.2l.1-.1a2 2 0 112.8 2.8l-.1.1A1.7 1.7 0 0021 11a2 2 0 010 4z"/></svg>
+      Settings
+    </button>
+  </nav>
+
+  <div class="side__foot">
+    <div class="side__user">
+      <span class="side__avatar" id="userInitial">D</span>
+      <span class="side__user-text">
+        <strong id="userEmail">—</strong>
+        <small>Administrator</small>
+      </span>
+    </div>
+    <button class="btn btn--ghost btn--block" id="logoutBtn">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M15 17l5-5-5-5M20 12H9M12 3H5v18h7"/></svg>
+      Sign out
+    </button>
+  </div>
+</aside>
+
+<div class="main">
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="topbar__inner">
+      <button class="icon-btn icon-btn--dark" id="menuBtn" aria-label="Toggle menu">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <div class="crumb">
+        <span>Inventory portal</span>
+        <svg class="ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        <span class="crumb__now" id="crumbNow">Dashboard</span>
+      </div>
+      <div class="topbar__actions">
+        <span class="sync-pill"><span class="sync-pill__dot"></span> Live</span>
+        <a class="btn btn--ghost" href="/" target="_blank" rel="noopener">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>
+          <span>View shop</span>
+        </a>
+        <button class="btn btn--primary" id="newProductBtn">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          <span>New product</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="panel-view is-active" id="panel-dashboard">
+      <div class="page-head">
+        <div>
+          <p class="eyebrow">Overview</p>
+          <h2>Good day, Dayo</h2>
+          <p class="page-head__sub" id="dashSub">Here is how the store is doing.</p>
+        </div>
+        <div class="page-head__actions">
+          <span class="sync-pill" id="lastSync"></span>
+          <button class="btn btn--ghost" id="refreshBtnDash">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <article class="metric metric--gold">
+          <span class="metric__label">Inventory value</span>
+          <p class="metric__value" id="mValue">₦0</p>
+          <p class="metric__hint" id="mValueHint">Retail value at selling price</p>
+        </article>
+
+        <article class="metric">
+          <span class="metric__label">Items tracked</span>
+          <p class="metric__value" id="mItems">0</p>
+          <p class="metric__hint" id="mItemsHint">0 units on hand</p>
+        </article>
+
+        <article class="metric metric--warn" id="lowStockTile">
+          <span class="metric__label">Low stock</span>
+          <p class="metric__value" id="mLow">0</p>
+          <p class="metric__hint" id="mLowHint">At or below their reorder level</p>
+        </article>
+
+        <article class="metric metric--ok">
+          <span class="metric__label">Orders received</span>
+          <p class="metric__value" id="mOrders">0</p>
+          <p class="metric__hint" id="mOrdersHint">₦0 in order value</p>
+        </article>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel__head">
+            <h3 class="panel__title">Needs restocking</h3>
+            <button class="btn btn--ghost btn--sm" data-panel-jump="inventory">Open inventory</button>
+          </div>
+          <div id="restockList" class="mini-list"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head">
+            <h3 class="panel__title">Latest orders</h3>
+            <button class="btn btn--ghost btn--sm" data-panel-jump="orders">All orders</button>
+          </div>
+          <div id="latestOrders" class="mini-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ INVENTORY ============ -->
+    <section class="panel-view" id="panel-inventory">
+      <div class="page-head">
+        <div>
+          <p class="eyebrow">Stock control</p>
+          <h2>Inventory</h2>
+          <p class="page-head__sub">Changes publish to the shopfront immediately — <a href="/" target="_blank" rel="noopener">open the shop</a> in another tab to watch it happen.</p>
+        </div>
+        <div class="page-head__actions">
+          <button class="btn btn--ghost" id="refreshBtn">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
+            Refresh
+          </button>
+          <button class="btn btn--ghost" id="exportCsvBtn">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>
+            Export
+          </button>
+          <button class="btn btn--primary" id="newProductBtn2">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Add product
+          </button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">
+          <div class="search search--sm">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.3-4.3"/></svg>
+            <input type="search" id="invSearch" placeholder="Search name, SKU or category…" aria-label="Search inventory" />
+          </div>
+          <div class="panel__filters">
+            <div class="select-wrap"><select id="invCategory" aria-label="Filter by category"></select></div>
+            <div class="select-wrap">
+              <select id="invStock" aria-label="Filter by stock status">
+                <option value="all">All stock levels</option>
+                <option value="low">Low or out of stock</option>
+                <option value="out">Out of stock only</option>
+                <option value="healthy">Healthy only</option>
+              </select>
+            </div>
+            <div class="select-wrap">
+              <select id="invSort" aria-label="Sort">
+                <option value="name">Name, A–Z</option>
+                <option value="stock-asc">Stock, low to high</option>
+                <option value="stock-desc">Stock, high to low</option>
+                <option value="value-desc">Value, high to low</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Category</th>
+                <th class="num">Price</th>
+                <th class="num">Stock</th>
+                <th>Status</th>
+                <th class="num">Value</th>
+                <th class="right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="invBody"></tbody>
+          </table>
+        </div>
+        <div class="table-foot" id="invFoot"></div>
+      </div>
+    </section>
+
+    <!-- ============ ORDERS ============ -->
+    <section class="panel-view" id="panel-orders">
+      <div class="page-head">
+        <div>
+          <p class="eyebrow">Fulfilment</p>
+          <h2>Orders</h2>
+          <p class="page-head__sub">Every checkout arrives here with the customer's delivery details, ready to confirm.</p>
+        </div>
+        <div class="page-head__actions">
+          <div class="select-wrap"><select id="orderFilter" aria-label="Filter orders">
+            <option value="all">All orders</option>
+            <option value="New">New</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+          </select></div>
+          <button class="btn btn--ghost" id="exportOrdersBtn">Export</button>
+          <button class="btn btn--ghost" id="clearOrdersBtn">Clear</button>
+        </div>
+      </div>
+      <div class="log-list" id="ordersList"></div>
+    </section>
+
+    <!-- ============ MOVEMENTS ============ -->
+    <section class="panel-view" id="panel-transactions">
+      <div class="page-head">
+        <div>
+          <p class="eyebrow">Audit</p>
+          <h2>Stock movements</h2>
+          <p class="page-head__sub">Every change to stock, logged automatically — sales, deliveries, edits and deletions.</p>
+        </div>
+        <div class="page-head__actions">
+          <button class="btn btn--ghost" id="exportLogBtn">Export</button>
+        </div>
+      </div>
+      <div class="log-list" id="txList"></div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section class="panel-view" id="panel-settings">
+      <div class="page-head">
+        <div>
+          <p class="eyebrow">Configuration</p>
+          <h2>Settings</h2>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel panel--pad">
+          <h3 class="panel__title">Store contact</h3>
+          <p class="muted">Used to build the WhatsApp hand-off and the order email.</p>
+          <dl class="kv">
+            <div><dt>WhatsApp number</dt><dd id="setWa">—</dd></div>
+            <div><dt>Order email</dt><dd id="setEmail">—</dd></div>
+            <div><dt>Currency</dt><dd id="setCur">—</dd></div>
+            <div><dt>Free delivery from</dt><dd id="setFree">—</dd></div>
+            <div><dt>Delivery fee</dt><dd id="setFee">—</dd></div>
+            <div><dt>Default reorder level</dt><dd id="setLow">—</dd></div>
+          </dl>
+          <p class="note-box">To change these, edit the <code>CONFIG</code> block in <code>server.js</code> and restart the server. Change the WhatsApp number there if the store line ever changes.</p>
+        </div>
+
+        <div class="panel panel--pad">
+          <h3 class="panel__title">Data</h3>
+          <p class="muted">Everything lives in the server database. Export before resetting.</p>
+          <div class="stack">
+            <button class="btn btn--ghost" id="backupBtn">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>
+              Download full backup
+            </button>
+            <button class="btn btn--danger" id="resetBtn">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
+              Reset to seed catalogue
+            </button>
+          </div>
+          <p class="note-box note-box--warn">Resetting replaces every product, stock level and order in the database with the demo catalogue.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ============ PRODUCT EDITOR ============ -->
+<div class="modal" id="productModal" hidden>
+  <div class="modal__scrim" data-close></div>
+  <div class="modal__card modal__card--wide" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <header class="modal__head">
+      <div>
+        <h3 id="modalTitle">Add product</h3>
+        <p class="modal__sub" id="modalSub">Fields marked * are required.</p>
+      </div>
+      <button class="icon-btn" data-close aria-label="Close">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+
+    <form id="productForm" class="form form--editor" novalidate>
+      <div class="field field--full image-field">
+        <label>Product image</label>
+        <div class="image-picker">
+          <div class="image-preview" id="imagePreview"></div>
+          <div class="image-controls">
+            <label class="btn btn--primary btn--sm" for="f-image-file">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>
+              Upload image
+            </label>
+            <input type="file" id="f-image-file" accept="image/*" hidden />
+            <button type="button" class="btn btn--ghost btn--sm" id="clearImageBtn">Remove</button>
+            <p class="image-hint">JPG or PNG up to 8 MB. Resized automatically so the catalogue stays quick.</p>
+            <div class="field field--tight">
+              <label for="f-image-url">or paste an image link</label>
+              <input id="f-image-url" type="url" placeholder="https://example.com/product.jpg" />
+            </div>
+            <p class="field__error" data-error="image"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="field field--full">
+        <label for="f-name">Product name <span class="req">*</span></label>
+        <input id="f-name" name="name" type="text" maxlength="60" placeholder="e.g. Anker 20W USB-C Fast Charger" />
+        <p class="field__error" data-error="name"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-sku">SKU <span class="req">*</span></label>
+        <div class="input-row">
+          <input id="f-sku" name="sku" type="text" maxlength="18" placeholder="KAV-0000" />
+          <button type="button" class="btn btn--ghost btn--sm" id="genSku">Auto</button>
+        </div>
+        <p class="field__error" data-error="sku"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-category">Category <span class="req">*</span></label>
+        <input id="f-category" name="category" type="text" list="categoryOptions" maxlength="24" placeholder="Electronics" />
+        <datalist id="categoryOptions"></datalist>
+        <p class="field__error" data-error="category"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-price">Selling price (₦) <span class="req">*</span></label>
+        <input id="f-price" name="price" type="number" min="0.01" step="0.01" placeholder="0.00" />
+        <p class="field__error" data-error="price"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-cost">Cost price (₦)</label>
+        <input id="f-cost" name="cost" type="number" min="0" step="0.01" placeholder="0.00" />
+        <p class="field__error" data-error="cost"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-stock">Stock quantity <span class="req">*</span></label>
+        <input id="f-stock" name="stock" type="number" min="0" step="1" placeholder="0" />
+        <p class="field__error" data-error="stock"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-reorder">Reorder level</label>
+        <input id="f-reorder" name="reorder" type="number" min="0" step="1" placeholder="5" />
+        <p class="field__error" data-error="reorder"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-unit">Sold per</label>
+        <div class="select-wrap select-wrap--full">
+          <select id="f-unit" name="unit"></select>
+        </div>
+        <p class="field__error" data-error="unit"></p>
+      </div>
+
+      <div class="field">
+        <label>Merchandising</label>
+        <label class="checkline">
+          <input type="checkbox" id="f-featured" name="featured" />
+          <span>Feature at the top of the shop</span>
+        </label>
+        <p class="field__error" data-error="featured"></p>
+      </div>
+
+      <div class="field field--full">
+        <label for="f-desc">Description</label>
+        <textarea id="f-desc" name="description" rows="3" maxlength="180" placeholder="What the customer needs to know — size, colour, warranty, contents."></textarea>
+        <div class="char-row"><span class="field__error" data-error="description"></span><span class="char-count" id="descCount">0 / 180</span></div>
+      </div>
+
+      <div class="margin-strip field--full" id="marginStrip" hidden>
+        <span>Margin per unit <strong id="marginPer">—</strong></span>
+        <span>Markup <strong id="marginPct">—</strong></span>
+        <span>Stock value at cost <strong id="marginStock">—</strong></span>
+      </div>
+
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--ghost" data-close>Cancel</button>
+        <button type="submit" class="btn btn--primary" id="saveProductBtn">Save product</button>
+      </footer>
+    </form>
+  </div>
+</div>
+
+<!-- ============ STOCK ADJUST ============ -->
+<div class="modal" id="stockModal" hidden>
+  <div class="modal__scrim" data-close></div>
+  <div class="modal__card modal__card--sm" role="dialog" aria-modal="true" aria-labelledby="stockTitle">
+    <header class="modal__head">
+      <h3 id="stockTitle">Adjust stock</h3>
+      <button class="icon-btn" data-close aria-label="Close">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+    <form id="stockForm" class="form">
+      <p class="stock-now" id="stockNow">—</p>
+      <div class="field field--full">
+        <label for="s-amount">Quantity received <span class="muted-inline">(negative to remove)</span></label>
+        <input id="s-amount" type="number" step="1" placeholder="e.g. 24" />
+        <p class="field__error" data-error="amount"></p>
+      </div>
+      <div class="field field--full">
+        <label for="s-note">Reason</label>
+        <input id="s-note" type="text" maxlength="60" placeholder="New delivery, damaged, stock count…" />
+      </div>
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--ghost" data-close>Cancel</button>
+        <button type="submit" class="btn btn--primary">Apply</button>
+      </footer>
+    </form>
+  </div>
+</div>
+
+<!-- ============ CONFIRM ============ -->
+<div class="modal" id="confirmModal" hidden>
+  <div class="modal__scrim" data-close></div>
+  <div class="modal__card modal__card--sm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <header class="modal__head">
+      <h3 id="confirmTitle">Are you sure?</h3>
+      <button class="icon-btn" data-close aria-label="Close">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+    <p class="confirm__text" id="confirmText"></p>
+    <footer class="modal__foot" style="padding:0 26px 26px">
+      <button type="button" class="btn btn--ghost" data-close>Cancel</button>
+      <button type="button" class="btn btn--danger" id="confirmOk">Confirm</button>
+    </footer>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="assets/brand.js"></script>
+<script src="store.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
