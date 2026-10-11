@@ -58,39 +58,33 @@
 
   <!-- ============ CATALOGUE ============ -->
   <section class="view is-active" id="view-storefront" role="tabpanel">
-    <div class="hero">
-      <div class="hero__copy">
-        <p class="eyebrow">Kavari Stores</p>
-        <h1 class="display">Considered goods,<br /><em>kept in stock.</em></h1>
-        <p class="hero__text">Electronics, apparel, groceries and homeware — curated for Lagos, priced honestly, and confirmed with you personally on WhatsApp before anything ships.</p>
+    <div class="hero hero--billboard">
+      <div class="showcase showcase--billboard" id="showcase">
+        <div class="showcase__track" id="showcaseTrack"></div>
+        <button class="showcase__arrow showcase__arrow--prev" id="showcasePrev" aria-label="Previous featured product">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <button class="showcase__arrow showcase__arrow--next" id="showcaseNext" aria-label="Next featured product">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+        <div class="showcase__copy">
+          <p class="eyebrow eyebrow--on-image">Kavari Stores</p>
+          <h1 class="display display--on-image">Considered goods,<br /><em>kept in stock.</em></h1>
+        </div>
+        <div class="showcase__dots" id="showcaseDots" role="tablist" aria-label="Choose featured product"></div>
+      </div>
+      <div class="hero__strip">
+        <div class="hero__strip-figures">
+          <span><strong id="heroProducts">—</strong> pieces listed</span>
+          <span class="hero__strip-sep" aria-hidden="true">·</span>
+          <span><strong id="heroInStock">—</strong> ready to ship</span>
+        </div>
         <div class="hero__steps">
           <span><b>1</b> Choose your items</span>
           <span><b>2</b> Leave delivery details</span>
           <span><b>3</b> Confirm on WhatsApp</span>
         </div>
       </div>
-
-      <aside class="hero__panel">
-        <div class="hero__figures">
-          <div class="hero__figure">
-            <span id="heroProducts">—</span>
-            <small>Pieces listed</small>
-          </div>
-          <div class="hero__figure">
-            <span id="heroInStock">—</span>
-            <small>Ready to ship</small>
-          </div>
-        </div>
-        <div class="hero__rule"></div>
-        <div class="hero__assurance">
-          <svg class="ic" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 8.2-7 9-4-.8-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
-          <span>Stock shown is live from the shop floor. No online payment — we agree that with you directly.</span>
-        </div>
-        <div class="hero__assurance">
-          <svg class="ic" viewBox="0 0 24 24"><path d="M3 7h13v10H3zM16 10h3l2 3v4h-5z"/><path d="M6.5 19.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM17.5 19.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
-          <span>Free delivery within Lagos on orders over ₦50,000.</span>
-        </div>
-      </aside>
     </div>
 
     <div class="toolbar">

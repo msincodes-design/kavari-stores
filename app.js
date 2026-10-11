@@ -58,10 +58,116 @@
       `<button class="chip ${filters.category === c ? 'is-active' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
   }
 
+  /* ---------------- featured showcase: slides through in-stock, imaged products first ---------------- */
+  const showcase = { items: [], index: 0, timer: null, wired: false };
+
+  function showcaseItems() {
+    const pool = state.products.filter((p) => p.stock > 0);
+    if (!pool.length) return [];
+    const withImage = pool.filter((p) => p.image);
+    const featured = pool.filter((p) => p.featured);
+    // imaged + featured first, then imaged, then featured, then the rest — max 6
+    const rank = (p) => (p.image && p.featured ? 0 : p.image ? 1 : p.featured ? 2 : 3);
+    return pool.slice().sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name)).slice(0, withImage.length ? 6 : 5);
+  }
+
+  function renderShowcase() {
+    const track = $('#showcaseTrack');
+    const dots = $('#showcaseDots');
+    if (!track || !dots) return;
+
+    showcase.items = showcaseItems();
+    if (showcase.index >= showcase.items.length) showcase.index = 0;
+
+    if (!showcase.items.length) {
+      track.innerHTML = `<div class="showcase__slide"><div class="showcase__media showcase__media--glyph"><span class="card__glyph">🏷️</span><div class="showcase__shade"></div><div class="showcase__caption"><span class="showcase__flag">Kavari Stores</span><p class="showcase__name">The shelf is being restocked</p><p class="showcase__sub">Check back shortly — or ask us on WhatsApp.</p></div></div></div>`;
+      dots.innerHTML = '';
+      return;
+    }
+
+    track.innerHTML = showcase.items.map((p) => `
+      <div class="showcase__slide" data-quick="${p.id}" role="tab" aria-label="${esc(p.name)}">
+        <div class="showcase__media${p.image ? '' : ' showcase__media--glyph'}"${p.image ? ` style="background-image:url('${esc(p.image)}')"` : ''}>
+          ${p.image ? '' : `<span class="card__glyph">${K.glyphFor(p)}</span>`}
+          <div class="showcase__shade"></div>
+          <div class="showcase__caption">
+            <span class="showcase__flag">${p.featured ? 'Featured' : esc(p.category)}</span>
+            <p class="showcase__name">${esc(p.name)}</p>
+            <p class="showcase__sub"><strong>${money(p.price)}</strong> · ${p.stock <= 0 ? 'Out of stock' : p.stock + ' available'} · tap to view</p>
+          </div>
+        </div>
+      </div>`).join('');
+
+    dots.innerHTML = showcase.items.map((_, i) =>
+      `<button data-dot="${i}" role="tab" aria-selected="${i === showcase.index}" aria-label="Show slide ${i + 1}"></button>`).join('');
+
+    goToSlide(showcase.index, true);
+    restartShowcase();
+  }
+
+  function goToSlide(i, instant) {
+    const track = $('#showcaseTrack');
+    const dots = $('#showcaseDots');
+    if (!track || !showcase.items.length) return;
+    showcase.index = (i + showcase.items.length) % showcase.items.length;
+    if (instant) track.style.transition = 'none';
+    track.style.transform = `translateX(-${showcase.index * 100}%)`;
+    if (instant) requestAnimationFrame(() => { track.style.transition = ''; });
+    if (dots) {
+      [...dots.children].forEach((d, n) => {
+        d.classList.toggle('is-active', n === showcase.index);
+        d.setAttribute('aria-selected', String(n === showcase.index));
+      });
+    }
+  }
+
+  function restartShowcase() {
+    clearInterval(showcase.timer);
+    if (showcase.items.length < 2) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    showcase.timer = setInterval(() => {
+      if (document.visibilityState === 'hidden') return;
+      goToSlide(showcase.index + 1);
+    }, 5000);
+  }
+
+  function wireShowcase() {
+    if (showcase.wired) return;
+    showcase.wired = true;
+    const root = $('#showcase');
+    if (!root) return;
+    $('#showcasePrev').addEventListener('click', (e) => { e.stopPropagation(); goToSlide(showcase.index - 1); restartShowcase(); });
+    $('#showcaseNext').addEventListener('click', (e) => { e.stopPropagation(); goToSlide(showcase.index + 1); restartShowcase(); });
+    $('#showcaseDots').addEventListener('click', (e) => {
+      const d = e.target.closest('[data-dot]');
+      if (!d) return;
+      goToSlide(Number(d.dataset.dot));
+      restartShowcase();
+    });
+    root.addEventListener('pointerenter', () => clearInterval(showcase.timer));
+    root.addEventListener('pointerleave', () => restartShowcase());
+    let touchX = null;
+    root.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+    root.addEventListener('touchend', (e) => {
+      if (touchX === null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 40) goToSlide(showcase.index + (dx < 0 ? 1 : -1));
+      touchX = null;
+      restartShowcase();
+    }, { passive: true });
+    // tapping a slide opens that product's quick view
+    $('#showcaseTrack').addEventListener('click', (e) => {
+      const slide = e.target.closest('[data-quick]');
+      if (slide) openQuickView(slide.dataset.quick);
+    });
+  }
+
   function renderStorefront() {
     renderChips();
     $('#heroProducts').textContent = state.products.length;
     $('#heroInStock').textContent = state.products.filter((p) => p.stock > 0).length;
+    wireShowcase();
+    renderShowcase();
 
     const grid = $('#productGrid');
 

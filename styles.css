@@ -228,6 +228,62 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 500; letter-spacing:
   display: grid; grid-template-columns: 1.05fr .95fr; gap: 54px; align-items: center;
   padding: 26px 0 62px;
 }
+
+/* --- billboard: the showcase IS the hero, full-bleed edge to edge --- */
+.hero--billboard { display: block; padding: 8px 0 0; }
+.showcase--billboard {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: #0E0E10;
+  min-height: clamp(460px, 62vh, 640px);
+  display: flex;
+}
+.showcase--billboard .showcase__track { position: absolute; inset: 0; }
+.showcase--billboard .showcase__slide { position: relative; }
+.showcase--billboard .showcase__media { height: 100%; min-height: clamp(460px, 62vh, 640px); }
+.showcase--billboard .showcase__shade {
+  background:
+    linear-gradient(180deg, rgba(6,6,7,.55) 0%, transparent 32%, transparent 52%, rgba(6,6,7,.88) 100%),
+    linear-gradient(100deg, rgba(6,6,7,.72) 0%, transparent 55%);
+}
+.showcase__copy {
+  position: absolute; z-index: 3;
+  left: 0; top: 0; bottom: 0;
+  display: flex; flex-direction: column; justify-content: center;
+  max-width: 620px; padding: 40px 48px;
+  pointer-events: none;
+}
+.eyebrow--on-image { color: var(--gold-300); margin-bottom: 16px; }
+.display--on-image {
+  margin: 0;
+  color: #fff;
+  text-shadow: 0 2px 26px rgba(0,0,0,.55);
+}
+.showcase--billboard .showcase__caption { padding: 20px 48px 34px; }
+.showcase--billboard .showcase__caption .showcase__name { font-size: 19px; }
+.hero__strip {
+  display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap;
+  padding: 20px 4px 30px;
+}
+.hero__strip-figures { display: flex; align-items: baseline; gap: 10px; font-size: 12.5px; color: var(--text-4); }
+.hero__strip-figures strong { font-family: var(--font-display); font-weight: 500; font-size: 19px; color: var(--text); }
+.hero__strip-sep { opacity: .5; }
+.hero__strip .hero__steps { gap: 8px 22px; }
+
+@media (max-width: 860px) {
+  .showcase__copy { padding: 26px; max-width: 100%; justify-content: flex-end; padding-bottom: 96px; }
+  .showcase--billboard,
+  .showcase--billboard .showcase__media { min-height: 480px; }
+  .showcase--billboard .showcase__caption { padding: 14px 26px 26px; }
+  .hero__strip { padding: 16px 2px 24px; }
+}
+@media (max-width: 620px) {
+  .hero--billboard { padding-top: 0; }
+  .showcase--billboard { border-radius: var(--radius); }
+  .showcase--billboard,
+  .showcase--billboard .showcase__media { min-height: 420px; }
+  .showcase__copy { padding: 20px 20px 110px; }
+}
 .hero__copy { max-width: 560px; }
 .hero__text { margin: 0 0 30px; font-size: 15.5px; color: var(--text-2); max-width: 46ch; line-height: 1.65; }
 .hero__steps { display: flex; flex-wrap: wrap; gap: 10px 26px; }
@@ -802,3 +858,59 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 500; letter-spacing:
 /* quick-view header row */
 .qv__top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .qv__top .stock { margin-left: auto; }
+
+/* ==========================================================================
+   Featured showcase — image-led carousel in the hero panel
+   ========================================================================== */
+.hero__panel--showcase { padding: 18px; gap: 18px; }
+.showcase { position: relative; border-radius: var(--radius); overflow: hidden; background: #0E0E10; border: 1px solid var(--line); }
+.showcase__track { display: flex; transition: transform .55s cubic-bezier(.3,.8,.3,1); }
+.showcase__slide { flex: 0 0 100%; min-width: 0; cursor: pointer; }
+.showcase__media { height: 300px; background-size: cover; background-position: center; position: relative; display: grid; place-items: center; }
+.showcase__media--glyph { background: radial-gradient(120% 100% at 50% 0%, rgba(201,162,75,.10), transparent 60%), #0E0E10; }
+.showcase__media--glyph .card__glyph { font-size: 84px; }
+.showcase__shade {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(6,6,7,.82) 100%);
+}
+.showcase__caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 44px 20px 18px; }
+.showcase__flag {
+  display: inline-block; margin-bottom: 8px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold-300); border: 1px solid rgba(201,162,75,.4); border-radius: 4px;
+  padding: 3px 8px; background: rgba(11,11,12,.6);
+}
+.showcase__name { margin: 0 0 4px; font-family: var(--font-body); font-size: 16.5px; font-weight: 600; color: #fff; line-height: 1.35; }
+.showcase__sub { margin: 0; font-size: 12.5px; color: rgba(255,255,255,.72); }
+.showcase__sub strong { color: var(--gold-300); font-weight: 600; }
+.showcase__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border-radius: 50%; border: 1px solid rgba(255,255,255,.22);
+  background: rgba(11,11,12,.55); color: #fff; backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity .2s ease, background .2s ease;
+}
+.showcase:hover .showcase__arrow, .showcase:focus-within .showcase__arrow { opacity: 1; }
+.showcase__arrow:hover { background: rgba(11,11,12,.85); }
+.showcase__arrow .ic { width: 16px; height: 16px; }
+.showcase__arrow--prev { left: 12px; }
+.showcase__arrow--next { right: 12px; }
+.showcase__dots { position: absolute; left: 0; right: 0; bottom: 12px; display: flex; justify-content: center; gap: 7px; }
+.showcase__dots button {
+  width: 22px; height: 3px; border-radius: 2px; padding: 0;
+  background: rgba(255,255,255,.28); transition: background .25s ease, width .25s ease;
+}
+.showcase__dots button.is-active { background: var(--gold-500); width: 34px; }
+.showcase__dots { bottom: auto; top: 14px; }
+.showcase__caption { padding-bottom: 16px; }
+.hero__figures--row { grid-template-columns: 1fr 1fr; align-items: start; }
+.hero__assure { grid-column: 1 / -1; margin: 0; font-size: 11.5px; color: var(--text-4); line-height: 1.55; }
+
+@media (max-width: 620px) {
+  .showcase__media { height: 230px; }
+  .showcase__arrow { opacity: 1; width: 32px; height: 32px; }
+  .hero__panel--showcase { padding: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcase__track { transition: none; }
+}
