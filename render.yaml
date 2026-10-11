@@ -1,0 +1,15 @@
+# Render blueprint for Kavari Stores.
+# Import this repo as a Blueprint (New → Blueprint) and Render reads it.
+services:
+  - type: web
+    name: kavari-stores
+    runtime: node
+    plan: free
+    buildCommand: ""
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: DATA_DIR
+        value: ./data
